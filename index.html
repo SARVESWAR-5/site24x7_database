@@ -10,19 +10,47 @@
     table { width: 80%; margin: 20px auto; border-collapse: collapse; }
     table, th, td { border: 1px solid #ddd; padding: 10px; }
     th { background-color: #f4f4f4; }
+    .filter-container {
+      margin: 20px;
+    }
+    .filter-container select, .filter-container button, .filter-container input {
+      padding: 10px;
+      margin: 5px;
+      font-size: 1em;
+    }
   </style>
 </head>
 <body>
   <h1>Stored API Data</h1>
   <button id="fetchDataButton">Fetch & Store New Data</button>
   <button id="loadDataButton">Load Stored Data</button>
+
+  <!-- Filter Section -->
+  <div class="filter-container">
+    <label for="monitorTypeFilter">Filter by Monitor Type:</label>
+    <select id="monitorTypeFilter">
+      <option value="">All</option>
+      <!-- Monitor types will be populated dynamically -->
+    </select>
+
+    <label for="statusFilter">Filter by Status:</label>
+    <select id="statusFilter">
+      <option value="">All</option>
+      <!-- Statuses will be populated dynamically -->
+    </select>
+
+    <button id="applyFilters">Apply Filters</button>
+
+    <!-- Search Bar -->
+    <label for="nameSearch">Search by Name:</label>
+    <input type="text" id="nameSearch" placeholder="Enter monitor name" />
+  </div>
+
   <div id="apiResponse"></div>
 
   <script>
-    // Correct the API endpoint to match the port your backend is running on (3004)
     const API_BASE_URL = "http://localhost:3004/api"; // Make sure this matches the port your server is running on
 
-    // Button for fetching & storing new data
     document.getElementById("fetchDataButton").addEventListener("click", async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/fetchData`);
@@ -34,13 +62,13 @@
       }
     });
 
-    // Button for loading stored data
     document.getElementById("loadDataButton").addEventListener("click", async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/getData`);
         const data = await response.json();
         if (data.data) {
-          displayTable(data.data); // Display the data if it's fetched correctly
+          populateFilters(data.data);
+          displayTable(data.data);
         } else {
           alert('No data found!');
         }
@@ -52,6 +80,20 @@
 
     // Function to display the data in a table
     function displayTable(monitors) {
+      const monitorTypeFilter = document.getElementById("monitorTypeFilter").value;
+      const statusFilter = document.getElementById("statusFilter").value;
+      const searchTerm = document.getElementById("nameSearch").value.toLowerCase();
+
+      // Filter the monitors based on selected filters and search term
+      const filteredMonitors = monitors.filter(monitor => {
+        return (
+          (monitorTypeFilter === "" || monitor.monitor_type === monitorTypeFilter) &&
+          (statusFilter === "" || monitor.status === statusFilter) &&
+          (monitor.name.toLowerCase().includes(searchTerm))
+        );
+      });
+
+      // Display table
       let tableHTML = `
         <table>
           <thead>
@@ -65,7 +107,8 @@
           </thead>
           <tbody>
       `;
-      monitors.forEach(monitor => {
+
+      filteredMonitors.forEach(monitor => {
         tableHTML += `
           <tr>
             <td>${monitor.monitor_id}</td>
@@ -78,7 +121,73 @@
       });
       tableHTML += `</tbody></table>`;
       document.getElementById("apiResponse").innerHTML = tableHTML;
+
+      // Count and display monitor types and statuses
+      countMonitors(filteredMonitors);
     }
+
+    // Function to count and display monitor types and statuses
+    function countMonitors(monitors) {
+      const typeCounts = {};
+      const statusCounts = {};
+
+      monitors.forEach(monitor => {
+        typeCounts[monitor.monitor_type] = (typeCounts[monitor.monitor_type] || 0) + 1;
+        statusCounts[monitor.status] = (statusCounts[monitor.status] || 0) + 1;
+      });
+
+      let countHTML = "<h3>Monitor Type Counts:</h3><ul>";
+      for (let type in typeCounts) {
+        countHTML += `<li>${type}: ${typeCounts[type]}</li>`;
+      }
+      countHTML += "</ul><h3>Status Counts:</h3><ul>";
+      for (let status in statusCounts) {
+        countHTML += `<li>${status}: ${statusCounts[status]}</li>`;
+      }
+      countHTML += "</ul>";
+
+      document.getElementById("apiResponse").insertAdjacentHTML('beforeend', countHTML);
+    }
+
+    // Function to populate the filter dropdowns with unique values
+    function populateFilters(monitors) {
+      const monitorTypeFilter = document.getElementById("monitorTypeFilter");
+      const statusFilter = document.getElementById("statusFilter");
+
+      // Get unique monitor types and statuses
+      const uniqueMonitorTypes = [...new Set(monitors.map(monitor => monitor.monitor_type))];
+      const uniqueStatuses = [...new Set(monitors.map(monitor => monitor.status))];
+
+      // Populate monitor types filter
+      monitorTypeFilter.innerHTML = `<option value="">All</option>`;
+      uniqueMonitorTypes.forEach(type => {
+        monitorTypeFilter.innerHTML += `<option value="${type}">${type}</option>`;
+      });
+
+      // Populate status filter
+      statusFilter.innerHTML = `<option value="">All</option>`;
+      uniqueStatuses.forEach(status => {
+        statusFilter.innerHTML += `<option value="${status}">${status}</option>`;
+      });
+    }
+
+    // Apply selected filters
+    document.getElementById("applyFilters").addEventListener("click", async () => {
+      const response = await fetch(`${API_BASE_URL}/getData`);
+      const data = await response.json();
+      if (data.data) {
+        displayTable(data.data);
+      }
+    });
+
+    // Live search functionality
+    document.getElementById("nameSearch").addEventListener("input", async () => {
+      const response = await fetch(`${API_BASE_URL}/getData`);
+      const data = await response.json();
+      if (data.data) {
+        displayTable(data.data);
+      }
+    });
   </script>
 </body>
 </html>
