@@ -1,0 +1,129 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #f6d365 10%, #fda085 100%); /* Gradient background */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  h1 {
+    font-size: 2.5em;
+    margin-top: 20px;
+    color: #4a90e2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Adding shadow effect */
+  }
+  
+  /* Buttons */
+  button {
+    padding: 10px 20px;
+    border: none;
+    margin: 10px 0;
+    font-size: 1.1em;
+    cursor: pointer;
+    border-radius: 8px;
+    background-color: #4CAF50;
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  }
+  
+  button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Light/Dark Mode Toggle */
+  .dark-mode {
+    background: linear-gradient(135deg, #34495e 10%, #2c3e50 100%); /* Dark mode gradient */
+    color: #ecf0f1;
+  }
+  
+  .dark-mode h1 {
+    color: #e74c3c;
+  }
+  
+  .dark-mode button {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .dark-mode button:hover {
+    background-color: #1abc9c;
+  }
+  
+  /* Table Styles */
+  table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #ffffff 30%, #f8f9fa); /* Table gradient background */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  th, td {
+    padding: 20px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+    color: #555;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #fafafa; /* Alternate row background */
+  }
+  
+  tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  tr:hover {
+    background-color: #f2f2f2;
+    transform: translateY(-4px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 3D Hover Effect on Rows */
+  tr {
+    transition: all 0.3s ease;
+  }
+  
+  /* Button for Light/Dark Mode */
+  #toggleModeButton {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px;
+    font-size: 1.3em;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+  }
+  
+  #toggleModeButton:hover {
+    background-color: #2980b9;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  }
+  
+  #apiResponse {
+    margin-top: 20px;
+  }
+  

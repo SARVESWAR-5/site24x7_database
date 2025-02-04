@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Data Viewer</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    table { width: 80%; margin: 20px auto; border-collapse: collapse; }
+    table, th, td { border: 1px solid #ddd; padding: 10px; }
+    th { background-color: #f4f4f4; }
+  </style>
+</head>
+<body>
+  <h1>Stored API Data</h1>
+  <button id="fetchDataButton">Fetch & Store New Data</button>
+  <button id="loadDataButton">Load Stored Data</button>
+  <div id="apiResponse"></div>
+
+  <script>
+    // Correct the API endpoint to match the port your backend is running on (3004)
+    const API_BASE_URL = "http://localhost:3004/api"; // Make sure this matches the port your server is running on
+
+    // Button for fetching & storing new data
+    document.getElementById("fetchDataButton").addEventListener("click", async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/fetchData`);
+        const data = await response.json();
+        alert(data.message); // Alert success or failure message
+      } catch (error) {
+        console.error('Error fetching and storing data:', error);
+        alert('An error occurred while fetching and storing data.');
+      }
+    });
+
+    // Button for loading stored data
+    document.getElementById("loadDataButton").addEventListener("click", async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/getData`);
+        const data = await response.json();
+        if (data.data) {
+          displayTable(data.data); // Display the data if it's fetched correctly
+        } else {
+          alert('No data found!');
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+        alert('An error occurred while loading data.');
+      }
+    });
+
+    // Function to display the data in a table
+    function displayTable(monitors) {
+      let tableHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Monitor ID</th>
+              <th>Name</th>
+              <th>Monitor Type</th>
+              <th>Status</th>
+              <th>Fetched At</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      monitors.forEach(monitor => {
+        tableHTML += `
+          <tr>
+            <td>${monitor.monitor_id}</td>
+            <td>${monitor.name}</td>
+            <td>${monitor.monitor_type}</td>
+            <td>${monitor.status}</td>
+            <td>${monitor.fetched_at}</td>
+          </tr>
+        `;
+      });
+      tableHTML += `</tbody></table>`;
+      document.getElementById("apiResponse").innerHTML = tableHTML;
+    }
+  </script>
+</body>
+</html>
